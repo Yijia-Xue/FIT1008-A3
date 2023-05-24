@@ -88,6 +88,7 @@ class BinarySearchTree(Generic[K, I]):
             where D is the depth of the tree
             CompK is the complexity of comparing the keys
         """
+
         if current is None:  # base case: at the leaf
             current = TreeNode(key, item=item)
             self.length += 1
@@ -97,6 +98,16 @@ class BinarySearchTree(Generic[K, I]):
             current.right = self.insert_aux(current.right, key, item)
         else:  # key == current.key
             raise ValueError('Inserting duplicate item')
+        
+        if current is not None:
+            new_size = 1
+            if current.left is not None:
+                new_size += current.left.subtree_size
+            if current.right is not None:
+                new_size += current.right.subtree_size           
+
+            current.set_subtree_size(new_size)
+
         return current
 
     def __delitem__(self, key: K) -> None:
@@ -131,21 +142,69 @@ class BinarySearchTree(Generic[K, I]):
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
+        if current is not None:
+            new_size = 1
+            
+            if current.left is not None:
+                new_size += current.left.subtree_size
+            if current.right is not None:
+               new_size += current.right.subtree_size           
+
+            current.set_subtree_size(new_size)
+
         return current
+
 
     def get_successor(self, current: TreeNode) -> TreeNode:
         """
             Get successor of the current node.
             It should be a child node having the smallest key among all the
             larger keys.
+
+            current - The tree node at the top of the sub-tree.
+            return - Returns a tree node that is the successor in that subtree.
+                     If no such node exists then None is returned.
         """
-        raise NotImplementedError()
+
+        #Checks if a successor is possible
+        if current.right is not None:
+            #Travels along the right node, then continues to find the minimum
+            #node along thr left hand side of the sub-tree
+            return self.get_minimal(current.right)
+        #No possible successor then we reutrn None
+        else:
+            return None
+
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
+
+            current - The tree node at the top of the sub-tree.
+            return - Returns a tree node with the minimal key in that subtree.
         """
-        raise NotImplementedError()
+        
+        return self.__get_minimal_aux(current)
+
+    def __get_minimal_aux(self, current: TreeNode) -> TreeNode:
+        """
+            Auxillary function for the recursive search of a minimal key
+            in a sub-tree.
+
+            current - The tree node at the top of the sub-tree.
+            return - Returns a tree node with the minimal key in that subtree.
+
+
+        """
+        
+        #Checks if the left node exists, if it does then we need to recursive
+        #search further down the left hand side for the minimal.
+        if current.left is not None:
+            return self.__get_minimal_aux(current.left)
+        #When the left value does not go any further then we can say this is 
+        #the node with the minimum key.
+        else:
+            return current
 
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
@@ -176,4 +235,25 @@ class BinarySearchTree(Generic[K, I]):
         """
         Finds the kth smallest value by key in the subtree rooted at current.
         """
-        raise NotImplementedError()
+        
+    
+    def __kth_smallest_aux(self, k: int, current: TreeNode) -> list[TreeNode]:
+        """
+            In-order traversal that is completed to find the kth smallest key.
+        """
+
+        if current is not None:
+            node_pos = self.__kth_smallest_aux(k, current.left)
+        else:
+            return []
+        
+        if len(node_pos) == k:
+            return node_pos
+        else:
+            node_pos.append(current)
+
+        if len(node_pos) == k:
+            return node_pos
+        else:
+            new_node = self.__kth_smallest_aux(k - len(node_pos), current.right)
+            node_pos = node_pos + new_node
