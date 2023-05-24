@@ -236,12 +236,15 @@ class BinarySearchTree(Generic[K, I]):
         Finds the kth smallest value by key in the subtree rooted at current.
         """
         
+        nodes = self.__kth_smallest_aux(k, current)
+
+        return nodes[k - 1]
     
     def __kth_smallest_aux(self, k: int, current: TreeNode) -> list[TreeNode]:
         """
             In-order traversal that is completed to find the kth smallest key.
         """
-
+        
         if current is not None:
             node_pos = self.__kth_smallest_aux(k, current.left)
         else:
@@ -256,4 +259,6 @@ class BinarySearchTree(Generic[K, I]):
             return node_pos
         else:
             new_node = self.__kth_smallest_aux(k - len(node_pos), current.right)
-            node_pos = node_pos + new_node
+            node_pos += new_node
+        
+        return node_pos
