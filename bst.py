@@ -99,6 +99,7 @@ class BinarySearchTree(Generic[K, I]):
         else:  # key == current.key
             raise ValueError('Inserting duplicate item')
         
+        #Takes the subtree sizes then adds them to the current size
         if current is not None:
             new_size = 1
             if current.left is not None:
@@ -142,6 +143,7 @@ class BinarySearchTree(Generic[K, I]):
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
+        #Takes the subtree sizes then adds them to the current size
         if current is not None:
             new_size = 1
             
@@ -182,6 +184,12 @@ class BinarySearchTree(Generic[K, I]):
 
             current - The tree node at the top of the sub-tree.
             return - Returns a tree node with the minimal key in that subtree.
+
+            :Complexity:
+            Worst-Case: Is O(N) where N is the number of nodes in the BST. This occurs when 
+                        the tree is unbalanced and all of the nodes are smaller than its parent.
+            Best-Case: Is O(log(N)), where N is the number of nodes in the tree. This occurs when 
+                       the tree is balanced and the traversal is only the depth of the tree.
         """
         
         return self.__get_minimal_aux(current)
@@ -194,7 +202,7 @@ class BinarySearchTree(Generic[K, I]):
             current - The tree node at the top of the sub-tree.
             return - Returns a tree node with the minimal key in that subtree.
 
-
+            :Complexity: See get_minimal for the overall use case complexity.
         """
         
         #Checks if the left node exists, if it does then we need to recursive
@@ -234,6 +242,16 @@ class BinarySearchTree(Generic[K, I]):
     def kth_smallest(self, k: int, current: TreeNode) -> TreeNode:
         """
         Finds the kth smallest value by key in the subtree rooted at current.
+
+        k - The position of the smallest node. We say the kth smallest.
+        current - Passes the parent node of the subtree we wis to perform the kth
+                  smallest on.
+
+        :Complexity: 
+            Worst-Case: Is O(N)*O(comp) where N is the number of nodes in the tree. This happens
+                When the tree isa unbalanced and all of the nodes are along one side of the tree.
+            Best-Case: Is O(log(N))*O(comp) when N is the number of nodes in the tree. This occurs 
+                       when we only need to traverse the depth of the tree.
         """
         
         nodes = self.__kth_smallest_aux(k, current)
@@ -243,18 +261,23 @@ class BinarySearchTree(Generic[K, I]):
     def __kth_smallest_aux(self, k: int, current: TreeNode) -> list[TreeNode]:
         """
             In-order traversal that is completed to find the kth smallest key.
+
+            :Complexity: See kth smallest for the overall use case of the funciton.
         """
         
+        #Checks the left side first
         if current is not None:
             node_pos = self.__kth_smallest_aux(k, current.left)
         else:
             return []
         
+        #Checks the actual node
         if len(node_pos) == k:
             return node_pos
         else:
             node_pos.append(current)
 
+        #Checks the right side
         if len(node_pos) == k:
             return node_pos
         else:
