@@ -64,10 +64,29 @@ class ThreeDeeBeeTree(Generic[I]):
         return node.item
 
     def get_tree_node_by_key(self, key: Point) -> BeeNode:
+        """
+            Finds a node object based on the key input of the user.
+
+            key - Key you want to search for.
+            return - Returns None if the key cannot be found in the tree.
+                     Else, if the key is found it will return the BeeNode object
+                     at that position in the tree.
+
+            :Complexity:
+                Worst-Case: O(N)*O(Comp) N being the number of nodes in the tree.
+                            This occurs when the tree is unbalanced and we are 
+                            searching for a leafnode of the tree.
+                Best-Case: O(1) this is when we have the root as the key we are 
+                           looking for.
+        """
         return self.__get_tree_node_by_key_aux(key, self.root)
 
     def __get_tree_node_by_key_aux(self, key: I, current: BeeNode):
+        """
+            Auxillary function used to find a node based on the key input.
 
+            :Complexity: See get_tree_node for overall use case complexity.
+        """
         if current is not None:
             if current.key == key:
                 return current
@@ -94,6 +113,19 @@ class ThreeDeeBeeTree(Generic[I]):
     def insert_aux(self, current: BeeNode, key: Point, item: I) -> BeeNode:
         """
             Attempts to insert an item into the tree, it uses the Key to insert it
+
+            current - The current node we are checkign the children of.
+            key - The key which we are inserting the item into.
+            item - The item we want to store at the node.
+
+            :Complexity: 
+                Worst-Case: Is O(N) where N is the number of nodes in the tree.
+                            This will happen when the tree is unbalanced and the 
+                            Node we are inserting goes to the bottom of the tree.
+                Best-Case: Is O(log(N)) where N is the number of nodes in the tree.
+                           This means we only have to traverse across teh depth of
+                           the tree to find the correct posion. Happens when the 
+                           tree is balanced.
         """
         #Calculates the position which needs to be appended or recursed
         position = 0
@@ -112,7 +144,6 @@ class ThreeDeeBeeTree(Generic[I]):
             current.connections[position] = new_node
             self.length += 1
 
-        
         #Adds the size of the lower subtrees to the current node
         for i in range(8):
             if current.connections[i] is not None:
