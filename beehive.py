@@ -35,15 +35,19 @@ class BeehiveSelector:
             hive_list - Input list to replace the current beehives.
 
             :Complexity:
-                Worst-Case: O(M)*O(log(M)) where M is the number of new beehives to add.
+                Worst-Case: O(M) where M is the number of new beehives to add.
         """
-        new_heap = MaxHeap(self.selector_size) #O(1)
 
-        for i in hive_list: #O(M)
-            new_heap.add(i) #O(log(M))
+        #O(M) Implements a bottom up contrsuction for inserting the elements
+        self.heap.length = 0
 
-        self.heap = new_heap
-        
+        if self.heap.the_array is not None:
+            for i in range(len(hive_list)):
+                self.the_array[i+1] = hive_list[i]
+
+            for i in range(len(hive_list)//2,0,-1):
+                self.heap.sink(i)
+                    
     #Adds the beehive using the heap function
     def add_beehive(self, hive: Beehive):
         """
